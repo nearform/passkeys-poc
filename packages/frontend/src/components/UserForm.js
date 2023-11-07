@@ -6,7 +6,8 @@ import {
 } from '@simplewebauthn/browser'
 
 function UserForm() {
-  const [username, setUsername] = useState('')
+  const [userName, setUserName] = useState('')
+  const [displayName, setDisplayName] = useState('')
 
   if (!browserSupportsWebAuthn()) {
     return (
@@ -26,13 +27,15 @@ function UserForm() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ username }),
+      body: JSON.stringify({ userName, displayName }),
       credentials: 'include'
     })
 
     let attResp
     try {
-      attResp = await startRegistration(await resp.json())
+      const responseData = await resp.json()
+      console.log(responseData)
+      attResp = await startRegistration(responseData)
     } catch (error) {
       if (error.name === 'InvalidStateError') {
         console.log(error)
@@ -51,7 +54,7 @@ function UserForm() {
 
     const verificationJSON = await verificationResp.json()
 
-    if (verificationJSON && verificationJSON.username) {
+    if (verificationJSON && verificationJSON.userName) {
       window.alert('Registration successfull!')
     } else {
       window.alert('Registration Failed!')
@@ -64,14 +67,15 @@ function UserForm() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ username }),
+      body: JSON.stringify({ userName }),
       credentials: 'include'
     })
 
     let asseResp
     try {
+      const authOpts = await resp.json()
       // Pass the options to the authenticator and wait for a response
-      asseResp = await startAuthentication(await resp.json())
+      asseResp = await startAuthentication(authOpts)
     } catch (error) {
       console.log(error)
     }
@@ -86,7 +90,7 @@ function UserForm() {
 
     const verificationJSON = await verificationResp.json()
 
-    if (verificationJSON && verificationJSON.username) {
+    if (verificationJSON && verificationJSON.userName) {
       window.alert('Logged in!')
     } else {
       window.alert('Login Failed')
@@ -94,41 +98,85 @@ function UserForm() {
   }
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md w-96">
-      <h1 className="text-2xl mb-4">User Form</h1>
+    <>
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+        <h1 className="text-2xl mb-4">Registration Form</h1>
 
-      <div className="mb-4">
-        <label
-          htmlFor="username"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Username
-        </label>
-        <input
-          type="text"
-          id="username"
-          autocomplete="username webauthn"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          className="mt-1 p-2 w-full border rounded-md"
-        />
+        <div className="mb-4">
+          <label
+            htmlFor="userName"
+            className="block text-sm font-medium text-gray-700"
+          >
+            User Name
+          </label>
+          <input
+            type="text"
+            id="userName"
+            autoComplete="userName webauthn"
+            value={userName}
+            onChange={e => setUserName(e.target.value)}
+            className="mt-1 p-2 w-full border rounded-md"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="displayName"
+            className="block text-sm font-medium text-gray-700"
+          >
+            User Display Name
+          </label>
+          <input
+            type="text"
+            id="displayName"
+            autoComplete="displayName webauthn"
+            value={displayName}
+            onChange={e => setDisplayName(e.target.value)}
+            className="mt-1 p-2 w-full border rounded-md"
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            onClick={handleRegister}
+            className="flex-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Register
+          </button>
+        </div>
       </div>
 
-      <div className="flex gap-4">
-        <button
-          onClick={handleRegister}
-          className="flex-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Register
-        </button>
-        <button
-          onClick={handleAuthenticate}
-          className="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Authenticate
-        </button>
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+        <h1 className="text-2xl mb-4">Authentication Form</h1>
+
+        <div className="mb-4">
+          <label
+            htmlFor="userName"
+            className="block text-sm font-medium text-gray-700"
+          >
+            User Name
+          </label>
+          <input
+            type="text"
+            id="userName"
+            name="userName"
+            autoComplete="webauthn"
+            value={userName}
+            onChange={e => setUserName(e.target.value)}
+            className="mt-1 p-2 w-full border rounded-md"
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            onClick={handleAuthenticate}
+            className="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Authenticate
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
