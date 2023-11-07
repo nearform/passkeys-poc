@@ -26,22 +26,25 @@ async function passkeys(fastify) {
         requireResidentKey: false,
         userVerification: 'preferred'
       }
-
       const attestationType = 'none'
-
+      const id = crypto.randomUUID()
       const options = await generateRegistrationOptions({
         rpName: RP_NAME,
         rpID: RP_ID,
-        userID: user.id,
-        userName: user.username,
-        userDisplayName: user.displayName || user.username,
+        userID: id,
+        userName: user.userName,
+        displayName: user.displayName || user.userName,
         // Prompt users for additional information about the authenticator.
         attestationType,
         authenticatorSelection
       })
 
       request.session.challenge = options.challenge
-      request.session.registratingUser = user
+      request.session.registratingUser = {
+        ...user,
+        displayName: user.displayName || user.userName,
+        id
+      }
 
       return options
     } catch (e) {
@@ -52,14 +55,11 @@ async function passkeys(fastify) {
 
   fastify.post('/auth/register/finish', async request => {
     // Set expected values.
-    console.log(request.session.sessionId)
     const expectedChallenge = request.session.challenge
     const user = request.session.registratingUser
     const expectedOrigin = 'http://localhost:3000'
     const expectedRPID = RP_ID
     const credential = request.body
-
-    request
 
     try {
       // Use SimpleWebAuthn's handy function to verify the registration request.
@@ -91,18 +91,17 @@ async function passkeys(fastify) {
         transports: credential.response.transports || [],
         registered: new Date().getTime(),
         last_used: null,
-        username: user.username
+        userName: user.userName,
+        displayName: user.displayName
       }
 
       const users = fastify.mongo.db.collection('users')
 
       await users.updateOne(
-        { username: user.username },
+        { ...user },
         { $set: { registration } },
         { upsert: true }
       )
-
-      console.log(registration)
 
       // Delete the challenge from the session.
       delete request.session.challenge
@@ -123,10 +122,11 @@ async function passkeys(fastify) {
     })
 
     request.session.challenge = options.challenge
+
     return options
   })
 
-  fastify.post('/auth/login/finish', async request => {
+  fastify.post('/auth/login/finish', async (request, reply) => {
     // Set expected values.
     const credential = request.body
     const expectedChallenge = request.session.challenge
@@ -172,15 +172,16 @@ async function passkeys(fastify) {
       // Delete the challenge from the session.
       delete request.session.challenge
 
+      users.updateOne(
+        { id: user.id },
+        { $set: { 'registration.last_used': new Date().toISOString() } }
+      )
       // Start a new session.
       request.session.user = user
-      request.session['signed-in'] = 'yes'
 
-      return user
+      reply.send(user)
     } catch (e) {
       delete request.session.challenge
-
-      console.error(e)
       throw Errors.Unauthorized()
     }
   })

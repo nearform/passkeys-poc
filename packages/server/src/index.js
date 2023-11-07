@@ -28,11 +28,14 @@ const buildServer = async config => {
   fastify.register(import('@fastify/session'), {
     secret: 'a secret with minimum length of 32 characters',
     cookie: {
-      secure: false
+      secure: 'auto'
     }
   })
 
   fastify.register(import('./plugins/fastify-passkeys-auth.js'))
+  fastify.register(import('./plugins/logout.js'))
+  fastify.register(import('./plugins/user.js'))
+
   return fastify
 }
 
