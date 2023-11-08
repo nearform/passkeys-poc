@@ -1,20 +1,12 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import {
-  startAuthentication,
-  browserSupportsWebAuthn,
-} from '@simplewebauthn/browser'
+import { startAuthentication } from '@simplewebauthn/browser'
 
 import NoWebAuthn from './NoWebAuthn'
 
 function AuthenticationForm({ switchMode, setError }) {
   const [userName, setUserName] = useState('')
   const navigate = useNavigate()
-
-  if (!browserSupportsWebAuthn()) {
-    return <NoWebAuthn />
-  }
-
   const handleAuthenticate = async () => {
     const resp = await fetch('/auth/login/start', {
       method: 'POST',

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
-
-import RegistrationForm from "../components/RegistrationForm";
-import AuthenticationForm from "../components/AuthenticationForm";
-import Toast from '../components/Toast';
+import { useEffect, useState } from 'react'
+import { browserSupportsWebAuthn } from '@simplewebauthn/browser'
+import RegistrationForm from "../components/RegistrationForm"
+import AuthenticationForm from "../components/AuthenticationForm"
+import Toast from '../components/Toast'
+import NoWebAuthn from '../components/NoWebAuthn'
 
 const MODES = {
   REGISTRATION: 'REGISTRATION',
@@ -34,6 +35,10 @@ export default function Auth() {
       return () => clearTimeout(clearId)
     }
   }, [error])
+
+  if (!browserSupportsWebAuthn()) {
+    return <NoWebAuthn />
+  }
 
   return (
     <>

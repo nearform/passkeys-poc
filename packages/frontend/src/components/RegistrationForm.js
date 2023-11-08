@@ -1,18 +1,10 @@
 import React, { useState } from 'react'
-import {
-  startRegistration,
-  browserSupportsWebAuthn
-} from '@simplewebauthn/browser'
+import { startRegistration } from '@simplewebauthn/browser'
 
 import NoWebAuthn from './NoWebAuthn'
 
 function RegistrationForm({ switchMode, setError }) {
   const [userName, setUserName] = useState('')
-
-  if (!browserSupportsWebAuthn()) {
-    return <NoWebAuthn />
-  }
-
   const handleRegister = async () => {
     const resp = await fetch('/auth/register/start', {
       method: 'POST',
