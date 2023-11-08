@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import {
   startAuthentication,
-  browserSupportsWebAuthn
+  browserSupportsWebAuthn,
 } from '@simplewebauthn/browser'
 
 import NoWebAuthn from './NoWebAuthn'
 
-function AuthenticationForm({ switchMode }) {
+function AuthenticationForm({ switchMode, setError }) {
   const [userName, setUserName] = useState('')
   const navigate = useNavigate()
 
@@ -22,7 +22,7 @@ function AuthenticationForm({ switchMode }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ userName }),
-      credentials: 'include'
+      // credentials: 'include'
     })
 
     let asseResp
@@ -33,6 +33,7 @@ function AuthenticationForm({ switchMode }) {
       asseResp = await startAuthentication(authOpts)
     } catch (error) {
       console.log(error)
+      return setError('Login Failed!')
     }
 
     const verificationResp = await fetch('/auth/login/finish', {
@@ -48,7 +49,7 @@ function AuthenticationForm({ switchMode }) {
     if (verificationJSON && verificationJSON.userName) {
       navigate('/user')
     } else {
-      window.alert('Login Failed')
+      setError('Login Failed!')
     }
   }
 
@@ -64,9 +65,7 @@ function AuthenticationForm({ switchMode }) {
         </label>
         <input
           type="text"
-          id="userName"
-          name="userName"
-          autoComplete="webauthn"
+          autoComplete="username webauthn"
           value={userName}
           onChange={e => setUserName(e.target.value)}
           className="mt-1 p-2 w-full border rounded-md"
