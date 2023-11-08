@@ -33,8 +33,6 @@ async function passkeys(fastify) {
         rpID: RP_ID,
         userID: id,
         userName: user.userName,
-        displayName: user.displayName || user.userName,
-        // Prompt users for additional information about the authenticator.
         attestationType,
         authenticatorSelection
       })
@@ -42,7 +40,6 @@ async function passkeys(fastify) {
       request.session.challenge = options.challenge
       request.session.registratingUser = {
         ...user,
-        displayName: user.displayName || user.userName,
         id
       }
 
@@ -91,8 +88,7 @@ async function passkeys(fastify) {
         transports: credential.response.transports || [],
         registered: new Date().getTime(),
         last_used: null,
-        userName: user.userName,
-        displayName: user.displayName
+        userName: user.userName
       }
 
       const users = fastify.mongo.db.collection('users')
@@ -118,11 +114,11 @@ async function passkeys(fastify) {
   fastify.post('/auth/login/start', async request => {
     const options = await generateAuthenticationOptions({
       rpID: RP_ID,
-      allowCredentials: []
+      allowCredentials: [],
+      userVerification: 'preferred'
     })
 
     request.session.challenge = options.challenge
-
     return options
   })
 
@@ -174,11 +170,11 @@ async function passkeys(fastify) {
 
       users.updateOne(
         { id: user.id },
-        { $set: { 'registration.last_used': new Date().toISOString() } }
+        { $set: { 'registration.last_used': new Date().getTime() } }
       )
+
       // Start a new session.
       request.session.user = user
-
       reply.send(user)
     } catch (e) {
       delete request.session.challenge

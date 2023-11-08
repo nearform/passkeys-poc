@@ -10,6 +10,7 @@ async function logout(fastify) {
         })
       })
     }
+    return {}
   })
 }
 
