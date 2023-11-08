@@ -41,12 +41,16 @@ to run the experiment run:
 
 `npm i`
 
-`docker-compose up -d`
+`npm start`
 
-to spin up the mongo db instance to store the users
+open http://localhost:3000 in your browser
+
+Docker is a prerequisite, as running `npm start` will spin up a Mongo container named `mongo_db_instance`. After stopping the project you will also need to stop this container with `npm stop mongo_db_instance`.
+
+As an alternative to `npm start`, you can start the database, server, and client with these individual commands:
+
+`docker-compose up -d`
 
 `npm run dev --workspace=server`
 
 `npm run start --workspace=frontend`
-
-open http://localhost:3000 in your browser
