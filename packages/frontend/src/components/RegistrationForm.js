@@ -8,7 +8,6 @@ import NoWebAuthn from './NoWebAuthn'
 
 function RegistrationForm({ switchMode, setError }) {
   const [userName, setUserName] = useState('')
-  const [displayName, setDisplayName] = useState('')
 
   if (!browserSupportsWebAuthn()) {
     return <NoWebAuthn />
@@ -20,7 +19,7 @@ function RegistrationForm({ switchMode, setError }) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userName, displayName }),
+      body: JSON.stringify({ userName }),
       credentials: 'include'
     })
 
@@ -63,27 +62,8 @@ function RegistrationForm({ switchMode, setError }) {
         </label>
         <input
           type="text"
-          id="userName"
-          autoComplete="userName webauthn"
           value={userName}
           onChange={e => setUserName(e.target.value)}
-          className="mt-1 p-2 w-full border rounded-md"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="displayName"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Display Name
-        </label>
-        <input
-          type="text"
-          id="displayName"
-          autoComplete="displayName webauthn"
-          value={displayName}
-          onChange={e => setDisplayName(e.target.value)}
           className="mt-1 p-2 w-full border rounded-md"
         />
       </div>
@@ -91,7 +71,8 @@ function RegistrationForm({ switchMode, setError }) {
       <div className="flex gap-4">
         <button
           onClick={handleRegister}
-          className="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2"
+          className="flex-1 bg-green-500 hover:bg-green-700 disabled:bg-green-100 text-white font-bold py-2 px-4 rounded mb-2"
+          disabled={userName === ''}
         >
           Register
         </button>
