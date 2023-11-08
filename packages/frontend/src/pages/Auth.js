@@ -2,15 +2,14 @@ import { useEffect, useState } from 'react';
 
 import RegistrationForm from "../components/RegistrationForm";
 import AuthenticationForm from "../components/AuthenticationForm";
-import RegistrationSuccess from '../components/RegistrationSuccess';
-import RegistrationError from '../components/RegistrationError';
+import Toast from '../components/Toast';
 
 const MODES = {
   REGISTRATION: 'REGISTRATION',
   AUTHENTICATION: 'AUTHENTICATION',
 }
 
-export default function App() {
+export default function Auth() {
   const [mode, setMode] = useState(MODES.REGISTRATION)
   const [error, setError] = useState()
   const [justRegisteredUserName, setJustRegisteredUserName] = useState()
@@ -42,11 +41,22 @@ export default function App() {
         {
           mode === MODES.REGISTRATION ?
             <RegistrationForm switchMode={setAuthenticationMode} setError={setError} /> :
-            <AuthenticationForm switchMode={setRegistrationMode} />
+            <AuthenticationForm switchMode={setRegistrationMode} setError={setError} />
         }
       </div>
-      {!!justRegisteredUserName && <RegistrationSuccess name={justRegisteredUserName} />}
-      {!!error && <RegistrationError error={error} />}
+      {!!justRegisteredUserName && (
+        <Toast>
+          <h3 className="font-bold">
+            {`Congratulations! You've successfully registered a new account for ${justRegisteredUserName}`}
+          </h3>
+          <p>Use the current form to authenticate and access your account.</p>
+        </Toast>
+      )}
+      {!!error && (
+        <Toast isError={true}>
+          <h3 className="font-bold">{error}</h3>
+        </Toast>
+      )}
     </>
   )
 }

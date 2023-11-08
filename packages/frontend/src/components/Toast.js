@@ -1,10 +1,11 @@
+function Toast({ children, isError }) {
+  const bgColor = isError ? 'bg-red-200' : 'bg-orange-200'
 
-function RegistrationSuccess({ error }) {
   return (
-    <div className="mx-auto p-8 bg-red-200 rounded-lg max-w-sm text-center text-sm">
-      <h3 className="font-bold">{error}</h3>
+    <div className={`mx-auto p-8 ${bgColor} rounded-lg max-w-sm text-center text-sm`}>
+      {children}
     </div>
   )
 }
 
-export default RegistrationSuccess
+export default Toast

@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
+const UserData = ({ label, value }) => (
+  <label className="mb-4 grid-cols-[0.3fr_1fr] grid">
+    <span>{label}: </span>
+    <input type="text" defaultValue={value} disabled className="w-100 flex-1 rounded-lg px-2 bg-slate-200" />
+  </label>
+)
+
 function User() {
   const navigate = useNavigate()
   const [user, setUser] = useState()
@@ -49,16 +56,39 @@ function User() {
     }
   }, [loggedOut, logoutCountdown, navigate])
 
-  return loggedOut ? (
-    <div className="p-8 rounded-lg shadow-uniform w-96 mx-auto my-6">
-      <p>{logoutMessage}</p>
-      <p>Redirecting in {logoutCountdown}</p>
-    </div>
-  ) : (
-    <div className="p-8 rounded-lg shadow-uniform max-w-2xl mx-auto my-6">
+  if (loggedOut) {
+    return (
+      <div className="p-8 rounded-lg shadow-uniform w-96 mx-auto my-6">
+        <p>{logoutMessage}</p>
+        <p>Redirecting in {logoutCountdown}</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-8 rounded-lg shadow-uniform w-[600px] mx-auto my-6 flex flex-col">
       <h1 className="text-2xl mb-4 text-center">Your User Data</h1>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
-      <button onClick={handleLogout}>logout</button>
+      <UserData label="User Name" value={user?.userName} />
+      <UserData label="Public Key" value={user?.registration?.publicKey} />
+      <UserData label="Transports" value={user?.registration?.transports?.join(', ')} />
+      <UserData
+        label="Registered"
+        value={
+          user?.registration?.registered ? new Date(user.registration.registered).toISOString() : ''
+        }
+      />
+      <UserData
+        label="Last Used"
+        value={
+          user?.registration?.last_used ? new Date(user.registration.last_used).toISOString() : ''
+        }
+      />
+      <button
+        className="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2"
+        onClick={handleLogout}
+      >
+        logout
+      </button>
     </div>
   )
 }
