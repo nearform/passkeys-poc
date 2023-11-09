@@ -1,21 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import { startAuthentication } from '@simplewebauthn/browser'
 
-import NoWebAuthn from './NoWebAuthn'
-
 function AuthenticationForm({ switchMode, setError }) {
-  const [userName, setUserName] = useState('')
   const navigate = useNavigate()
   const handleAuthenticate = async () => {
-    const resp = await fetch('/auth/login/start', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userName }),
-      // credentials: 'include'
-    })
+    const resp = await fetch('/auth/login/start')
 
     let asseResp
     try {
@@ -48,22 +38,6 @@ function AuthenticationForm({ switchMode, setError }) {
   return (
     <div className="bg-white">
       <h1 className="text-2xl mb-4 text-center">Authentication Form</h1>
-      <div className="mb-4">
-        <label
-          htmlFor="userName"
-          className="block text-sm font-medium text-gray-700"
-        >
-          User Name
-        </label>
-        <input
-          type="text"
-          autoComplete="username webauthn"
-          value={userName}
-          onChange={e => setUserName(e.target.value)}
-          className="mt-1 p-2 w-full border rounded-md"
-        />
-      </div>
-
       <div className="flex gap-4">
         <button
           onClick={handleAuthenticate}

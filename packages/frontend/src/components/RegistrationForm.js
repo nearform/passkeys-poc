@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { startRegistration } from '@simplewebauthn/browser'
 
-import NoWebAuthn from './NoWebAuthn'
-
 function RegistrationForm({ switchMode, setError }) {
   const [userName, setUserName] = useState('')
   const handleRegister = async () => {

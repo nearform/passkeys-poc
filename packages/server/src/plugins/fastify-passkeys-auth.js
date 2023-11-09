@@ -17,10 +17,6 @@ async function passkeys(fastify) {
     const user = request.body
 
     try {
-      // const authenticatorSelection = {
-      //   authenticatorAttachment: "cross-platform",
-      //   requireResidentKey: false,
-      // };
       const authenticatorSelection = {
         residentKey: 'preferred',
         requireResidentKey: false,
@@ -45,7 +41,7 @@ async function passkeys(fastify) {
 
       return options
     } catch (e) {
-      console.error(e)
+      request.log.error(e)
       throw new Errors.InternalServerError(e.message)
     }
   })
@@ -111,7 +107,7 @@ async function passkeys(fastify) {
     }
   })
 
-  fastify.post('/auth/login/start', async request => {
+  fastify.get('/auth/login/start', async request => {
     const options = await generateAuthenticationOptions({
       rpID: RP_ID,
       allowCredentials: [],
@@ -177,6 +173,7 @@ async function passkeys(fastify) {
       request.session.user = user
       reply.send(user)
     } catch (e) {
+      request.log.error(e)
       delete request.session.challenge
       throw Errors.Unauthorized()
     }
