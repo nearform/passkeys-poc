@@ -59,8 +59,8 @@ function User() {
   if (loggedOut) {
     return (
       <div className="p-8 rounded-lg shadow-uniform w-96 mx-auto my-6">
-        <p>{logoutMessage}</p>
-        <p>Redirecting in {logoutCountdown}</p>
+        <p className="text-center">{logoutMessage}</p>
+        <p className="text-center">Redirecting in {logoutCountdown}</p>
       </div>
     )
   }
