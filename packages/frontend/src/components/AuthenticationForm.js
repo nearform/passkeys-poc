@@ -36,18 +36,17 @@ function AuthenticationForm({ switchMode, setError }) {
   }
 
   return (
-    <form
-      className="bg-white"
-      onSubmit={handleAuthenticate}
-    >
-      <h1 className="text-2xl mb-4 text-center">Authentication Form</h1>
-      <div className="flex gap-4">
-        <button
-          className="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2"
-        >
-          Authenticate
-        </button>
-      </div>
+    <div className="bg-white">
+      <form onSubmit={handleAuthenticate}>
+        <h1 className="text-2xl mb-4 text-center">Authentication Form</h1>
+        <div className="flex gap-4">
+          <button
+            className="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2"
+          >
+            Authenticate
+          </button>
+        </div>
+      </form>
       <p className="text-center">Don't have an account yet?</p>
       <button
         className="mx-auto block underline decoration-dotted text-sky-600 hover:text-sky-300"
@@ -55,7 +54,7 @@ function AuthenticationForm({ switchMode, setError }) {
       >
         Click here to register
       </button>
-    </form>
+    </div>
   )
 }
 

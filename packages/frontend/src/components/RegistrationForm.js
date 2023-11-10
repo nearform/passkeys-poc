@@ -40,35 +40,34 @@ function RegistrationForm({ switchMode, setError }) {
   }
 
   return (
-    <form
-      className="bg-white"
-      onSubmit={handleRegister}
-    >
-      <h1 className="text-2xl mb-4 text-center">Registration Form</h1>
-      <div className="mb-4">
-        <label
-          htmlFor="userName"
-          className="block text-sm font-medium text-gray-700"
-        >
-          User Name
-        </label>
-        <input
-          type="text"
-          value={userName}
-          onChange={e => setUserName(e.target.value)}
-          className="mt-1 p-2 w-full border rounded-md"
-        />
-      </div>
+    <div className="bg-white">
+      <form onSubmit={handleRegister}>
+        <h1 className="text-2xl mb-4 text-center">Registration Form</h1>
+        <div className="mb-4">
+          <label
+            htmlFor="userName"
+            className="block text-sm font-medium text-gray-700"
+          >
+            User Name
+          </label>
+          <input
+            type="text"
+            value={userName}
+            onChange={e => setUserName(e.target.value)}
+            className="mt-1 p-2 w-full border rounded-md"
+          />
+        </div>
 
-      <div className="flex gap-4">
-        <button
-          className="flex-1 bg-green-500 hover:bg-green-700 disabled:bg-green-100 text-white font-bold py-2 px-4 rounded mb-2"
-          disabled={userName === ''}
-          type="submit"
-        >
-          Register
-        </button>
-      </div>
+        <div className="flex gap-4">
+          <button
+            className="flex-1 bg-green-500 hover:bg-green-700 disabled:bg-green-100 text-white font-bold py-2 px-4 rounded mb-2"
+            disabled={userName === ''}
+            type="submit"
+          >
+            Register
+          </button>
+        </div>
+      </form>
       <p className="text-center">Already have an account?</p>
       <button
         className="mx-auto block underline decoration-dotted  text-sky-600 hover:text-sky-300"
@@ -76,7 +75,7 @@ function RegistrationForm({ switchMode, setError }) {
       >
         Click here to authenticate
       </button>
-    </form>
+    </div>
   )
 }
 
