@@ -156,21 +156,26 @@ async function passkeys(fastify) {
 
       const { verified } = verification
 
+      // Delete the challenge from the session.
+      delete request.session.challenge
+
       // If the authentication failed, throw.
       if (!verified) {
         throw Errors.Unauthorized()
       }
 
-      // Delete the challenge from the session.
-      delete request.session.challenge
+      const time = new Date().getTime()
 
       users.updateOne(
         { id: user.id },
-        { $set: { 'registration.last_used': new Date().getTime() } }
+        { $set: { 'registration.last_used': time } }
       )
 
       // Start a new session.
-      request.session.user = user
+      request.session.user = {
+        ...user,
+        registration: { ...user.registration, last_used: time }
+      }
       reply.send(user)
     } catch (e) {
       request.log.error(e)
