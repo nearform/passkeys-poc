@@ -4,14 +4,14 @@ import { startAuthentication } from '@simplewebauthn/browser'
 
 function AuthenticationForm({ switchMode, setError }) {
   const navigate = useNavigate()
-  const handleAuthenticate = async () => {
+  const handleAuthenticate = async (event) => {
+    event.preventDefault()
     const resp = await fetch('/auth/login/start')
 
     let asseResp
     try {
       const authOpts = await resp.json()
       // Pass the options to the authenticator and wait for a response
-      // @TODO: adding true as a second argument here should enable autofill
       asseResp = await startAuthentication(authOpts)
     } catch (error) {
       console.log(error)
@@ -36,11 +36,13 @@ function AuthenticationForm({ switchMode, setError }) {
   }
 
   return (
-    <div className="bg-white">
+    <form
+      className="bg-white"
+      onSubmit={handleAuthenticate}
+    >
       <h1 className="text-2xl mb-4 text-center">Authentication Form</h1>
       <div className="flex gap-4">
         <button
-          onClick={handleAuthenticate}
           className="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2"
         >
           Authenticate
@@ -53,7 +55,7 @@ function AuthenticationForm({ switchMode, setError }) {
       >
         Click here to register
       </button>
-    </div>
+    </form>
   )
 }
 

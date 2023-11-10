@@ -3,14 +3,14 @@ import { startRegistration } from '@simplewebauthn/browser'
 
 function RegistrationForm({ switchMode, setError }) {
   const [userName, setUserName] = useState('')
-  const handleRegister = async () => {
+  const handleRegister = async (event) => {
+    event.preventDefault()
     const resp = await fetch('/auth/register/start', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ userName }),
-      credentials: 'include'
     })
 
     let attResp
@@ -26,7 +26,6 @@ function RegistrationForm({ switchMode, setError }) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        credentials: 'include'
       },
       body: JSON.stringify(attResp)
     })
@@ -41,7 +40,10 @@ function RegistrationForm({ switchMode, setError }) {
   }
 
   return (
-    <div className="bg-white">
+    <form
+      className="bg-white"
+      onSubmit={handleRegister}
+    >
       <h1 className="text-2xl mb-4 text-center">Registration Form</h1>
       <div className="mb-4">
         <label
@@ -60,9 +62,9 @@ function RegistrationForm({ switchMode, setError }) {
 
       <div className="flex gap-4">
         <button
-          onClick={handleRegister}
           className="flex-1 bg-green-500 hover:bg-green-700 disabled:bg-green-100 text-white font-bold py-2 px-4 rounded mb-2"
           disabled={userName === ''}
+          type="submit"
         >
           Register
         </button>
@@ -74,7 +76,7 @@ function RegistrationForm({ switchMode, setError }) {
       >
         Click here to authenticate
       </button>
-    </div>
+    </form>
   )
 }
 
