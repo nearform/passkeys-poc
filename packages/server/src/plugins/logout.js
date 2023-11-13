@@ -9,8 +9,9 @@ async function logout(fastify) {
           message
         })
       })
+    } else {
+      reply.send({})
     }
-    return {}
   })
 }
 
