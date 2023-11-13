@@ -47,7 +47,7 @@ function AuthenticationForm({ switchMode, setError }) {
 
     const verificationJSON = await verificationResp.json()
 
-    if (verificationJSON && verificationJSON.userName) {
+    if (verificationJSON && verificationJSON.username) {
       navigate('/user')
     } else {
       setError('Login Failed!')
@@ -73,7 +73,7 @@ function AuthenticationForm({ switchMode, setError }) {
         <h1 className="text-2xl mb-4 text-center">Authentication Form</h1>
         <div className="mb-4">
           <label
-            htmlFor="userName"
+            htmlFor="username"
             className="block text-sm font-medium text-gray-700"
           >
             User Name
@@ -81,6 +81,7 @@ function AuthenticationForm({ switchMode, setError }) {
           <input
             type="text"
             className="mt-1 p-2 w-full border rounded-md"
+            name="username"
             autoComplete="username webauthn"
           />
         </div>

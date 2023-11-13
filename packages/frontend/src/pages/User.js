@@ -68,7 +68,7 @@ function User() {
   return (
     <div className="p-8 rounded-lg shadow-uniform w-[600px] mx-auto my-6 flex flex-col">
       <h1 className="text-2xl mb-4 text-center">Your User Data</h1>
-      <UserData label="User Name" value={user?.userName} />
+      <UserData label="User Name" value={user?.username} />
       <UserData label="Public Key" value={user?.registration?.publicKey} />
       <UserData label="Transports" value={user?.registration?.transports?.join(', ')} />
       <UserData

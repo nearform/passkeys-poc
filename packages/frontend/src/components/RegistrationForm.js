@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { startRegistration } from '@simplewebauthn/browser'
 
 function RegistrationForm({ switchMode, setError }) {
-  const [userName, setUserName] = useState('')
+  const [username, setUsername] = useState('')
   const handleRegister = async (event) => {
     event.preventDefault()
     const resp = await fetch('/auth/register/start', {
@@ -10,7 +10,7 @@ function RegistrationForm({ switchMode, setError }) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userName }),
+      body: JSON.stringify({ username }),
     })
 
     let attResp
@@ -32,8 +32,8 @@ function RegistrationForm({ switchMode, setError }) {
 
     const verificationJSON = await verificationResp.json()
 
-    if (verificationJSON && verificationJSON.userName) {
-      switchMode(verificationJSON.userName);
+    if (verificationJSON && verificationJSON.username) {
+      switchMode(verificationJSON.username);
     } else {
       setError('Registration Failed!')
     }
@@ -45,15 +45,15 @@ function RegistrationForm({ switchMode, setError }) {
         <h1 className="text-2xl mb-4 text-center">Registration Form</h1>
         <div className="mb-4">
           <label
-            htmlFor="userName"
+            htmlFor="username"
             className="block text-sm font-medium text-gray-700"
           >
             User Name
           </label>
           <input
             type="text"
-            value={userName}
-            onChange={e => setUserName(e.target.value)}
+            value={username}
+            onChange={e => setUsername(e.target.value)}
             className="mt-1 p-2 w-full border rounded-md"
           />
         </div>
@@ -61,7 +61,7 @@ function RegistrationForm({ switchMode, setError }) {
         <div className="flex gap-4">
           <button
             className="flex-1 bg-green-500 hover:bg-green-700 disabled:bg-green-100 text-white font-bold py-2 px-4 rounded mb-2"
-            disabled={userName === ''}
+            disabled={username === ''}
             type="submit"
           >
             Register

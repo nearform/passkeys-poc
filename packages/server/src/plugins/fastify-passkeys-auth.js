@@ -28,7 +28,7 @@ async function passkeys(fastify) {
         rpName: RP_NAME,
         rpID: RP_ID,
         userID: id,
-        userName: user.userName,
+        userName: user.username,
         attestationType,
         authenticatorSelection
       })
@@ -84,7 +84,7 @@ async function passkeys(fastify) {
         transports: credential.response.transports || [],
         registered: new Date().getTime(),
         last_used: null,
-        userName: user.userName
+        username: user.username
       }
 
       const users = fastify.mongo.db.collection('users')
