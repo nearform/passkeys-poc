@@ -48,7 +48,7 @@ function RegistrationForm({ switchMode, setError }) {
             htmlFor="username"
             className="block text-sm font-medium text-gray-700"
           >
-            User Name
+            Username
           </label>
           <input
             type="text"

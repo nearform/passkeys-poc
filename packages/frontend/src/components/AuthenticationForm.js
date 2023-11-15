@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import {
   browserSupportsWebAuthnAutofill,
@@ -6,6 +6,7 @@ import {
 } from '@simplewebauthn/browser'
 
 function AuthenticationForm({ switchMode, setError }) {
+  const [supportsAutofill, setSupportsAutofill] = useState(false)
   const navigate = useNavigate()
   const handleAuthenticate = async (event) => {
     event.preventDefault()
@@ -58,10 +59,11 @@ function AuthenticationForm({ switchMode, setError }) {
     // initialize passkey autofill and kick off the authentication process
     // so passkeys are available for selection from the username field.
     const startAutoFill = async () => {
-      const supportsAutofill = await browserSupportsWebAuthnAutofill()
+      const supports = await browserSupportsWebAuthnAutofill()
 
-      if (supportsAutofill) {
+      if (supports) {
         authenticate(true)
+        setSupportsAutofill(true)
       }
     }
     startAutoFill()
@@ -71,12 +73,12 @@ function AuthenticationForm({ switchMode, setError }) {
     <div className="bg-white">
       <form onSubmit={handleAuthenticate}>
         <h1 className="text-2xl mb-4 text-center">Authentication Form</h1>
-        <div className="mb-4">
+        {supportsAutofill && (<div className="mb-4">
           <label
             htmlFor="username"
             className="block text-sm font-medium text-gray-700"
           >
-            User Name
+            Username
           </label>
           <input
             type="text"
@@ -84,7 +86,7 @@ function AuthenticationForm({ switchMode, setError }) {
             name="username"
             autoComplete="username webauthn"
           />
-        </div>
+        </div>)}
         <div className="flex gap-4">
           <button
             className="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2"

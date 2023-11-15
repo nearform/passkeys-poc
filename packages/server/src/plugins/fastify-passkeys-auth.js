@@ -11,7 +11,6 @@ import Errors from 'http-errors'
 const RP_ID = 'localhost'
 const RP_NAME = 'SimpleWebAuthn Demo'
 
-/** @type {import('fastify').FastifyPluginAsync} */
 async function passkeys(fastify) {
   fastify.post('/auth/register/start', async request => {
     const user = request.body
@@ -166,6 +165,7 @@ async function passkeys(fastify) {
 
       const time = new Date().getTime()
 
+      // update the user record
       users.updateOne(
         { id: user.id },
         { $set: { 'registration.last_used': time } }
@@ -176,6 +176,7 @@ async function passkeys(fastify) {
         ...user,
         registration: { ...user.registration, last_used: time }
       }
+
       reply.send(user)
     } catch (e) {
       request.log.error(e)

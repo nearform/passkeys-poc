@@ -1,55 +1,45 @@
-# Research Results
+# NearForm Passkeys POC
 
-In our [previous research](https://github.com/nearform/hub-draft-issues/issues/59), we explored WebAuthn and identified two primary challenges:
+This application is a proof of concept for using passkey based authentication. The code is split into server and client packages, the former is built on Fastify and the latter is built on React. Besides Node and NPM, it relies on Docker to run a Mongo container for data persistence.
 
-- **Cross-device Accessibility**: Users encountered challenges because platform authenticators were restricted to their native devices. This limitation hindered multi-device access to accounts.
+The server code is under `/packages/server`. The logic for handling passkeys is in `packages/server/sr/plugins/fastify-passkey-auth.js`.
 
-- **Implementation Complexity**: Direct deployment of WebAuthn introduced significant complexities for standard use cases.
+The client code is under `/packages/frontend`. It is a React application with one public page use for registration and authentication and one protected page that is viewable once a user is authenticated. Passkey logic is in `packages/frontend/src/components/RegistrationForm.js` and `packages/frontend/src/components/AuthenticationForm.js`.
 
-In light of these challenges, we explored **passkeys** and assessed their potential in resolving the issues mentioned.
+Client and server both rely on packages from https://simplewebauthn.dev/ to simplify the process of using passkeys.
 
-Passkeys, a collaborative initiative by leading tech giants—Google, Apple, and Microsoft, conform to standards set by the World Wide Web Consortium and the FIDO Alliance. Essentially, it is WebAuthn enriched with cloud synchronization capabilities.
+This project has a companion blog post at https://add-post.url if you'd like to read more about it.
 
-Built on WebAuthn, Passkeys introduce several features pertinent to our research:
+### Features
 
-- **Synced Passkeys**: These credentials, which allow password-free sign-ins, can be synchronized across different devices or cloud platforms and can be retrieved from backups. For instance, a passkey created on an Android device can be accessed on another Android device linked to the same account or restored from a cloud backup if the original device is lost and a replacement is set up.
+With the application running, a user is able to register one or more accounts using passkey based authentication. After an account is registered it will be available as an authentication credential. Authentication credentials are discoverable by the Authentication form via autofill after clicking on the username field or via the browser's passkey dropdown after clicking on the Authenticate button.
 
-- **Cross-Device Authentication (CDA)**: This feature enables the utilization of a passkey from one device to sign in on another. Within the CDA framework, the client (the device used for authentication) and the authenticator (which provides the passkey) play key roles. For instance, if I wish to register using a desktop, I can initiate a Cross-Device Authentication and use an Android device to generate the passkeys. When I need to use this passkey on a different device, I can activate Cross-Device Authentication and employ my phone as an authenticator without generating a new passkey. It's worth noting that while CDA can be applied during the registration/authentication phase, there are constraints:
+After choosing a credential a user will be required to authenticate with their system to access the credential and then be redirected to the application's protected page.
 
-  - **Limited device support**: https://passkeys.dev/device-support/
-  - **Hardware support** Both the client and the authenticator need to be proximate and equipped with Bluetooth/NFC.
-  - **Vendor lock-in**: There are possible issues if you want to move from one vendor to another.
+Registration and authentication are also available via an external Android or iOS device, but there are some restrictions on device/browser/OS interoperability. In our testing, the following scenarios worked:
 
-- **Autofill UI**: Browsers incorporate this feature, which, when triggered by including webauthn in the autocomplete field, simplifies the selection and use of passkeys and the initiation of Cross-Device Authentication.
+* An iOS device can be used to create and authenticate via Safari on an OSX device. It is not necessary for the user to be logged in to their Apple ID on the OSX device.
+* An Android device can be used to create and authenticate via Chrome on a Windows device. It is not necessary to be logged in to Chrome on the Windows machine.
 
-Collectively, these three features have greatly enhanced the user experience with passkeys.
+To test registration and authentication with your Android or iOS device ensure that Bluetooth is active on your mobile device and your computer. When selecting from registration or authentication options choose the one that reads 'Use a phone, table, or security key' (or similar, messaging varies by browser), then scan the QR code that appears over the browser and follow any authentication prompts that appear.
 
-From an implementation perspective, it's notable that one can still create device-bound passkeys. These keys are exclusive to a specific device and are non-transferable. In such instances, the Passkeys experience mirrors that of WebAuthn, except that the association between the keys and their corresponding websites is retained. Consequently, from an implementation standpoint, we can either:
+Passkey authentication is available in Chrome, Safari, and Edge on Windows or OSX machines when using device bound (locally hosted by the browser or OS) passkeys. Cross device authentication is available using Chrome or Edge on Windows, OSX, or Ubuntu and multi-device key registered on an Android or iOS device. While Firefox does support WebAuthn authentication with hardware keys, it does not yet support passkeys. More information on device compatability can be found [here](https://passkeys.dev/device-support/).
 
-- Create a restricted registration/authentication process where only Cross-Device Authentication is permissible.
-- Or implement at least the following features:
-  - A **recovery mechanism** for inaccessible passkeys (using SMS, email, or even passwords).
-  - A system to **manage** (add/delete) passkeys associated with users' accounts.
+### Running the application
 
-For actual passkey implementation, there are tools that considerably streamline the process. The library used for the POC is https://simplewebauthn.dev/, which comprises all the necessary utilities for integrating passkeys on both the client and server sides.
-
-# Running the POC
-
-an experiment for a React app and a fastify server to use passkeys for authentcation.
-
-to run the experiment run:
+To start the application run:
 
 `npm i`
 
 `npm start`
 
-open http://localhost:3000 in your browser
+Open http://localhost:3000 in your browser
 
-Docker is a prerequisite, as running `npm start` will spin up a Mongo container named `mongo_db_instance`. After stopping the project you will also need to stop this container with `npm stop mongo_db_instance`.
+Running `npm start` will spin up a Mongo container named `mongo_db_instance`. After stopping the project you will also need to stop this container with `docker stop mongo_db_instance`.
 
-As an alternative to `npm start`, you can start the database, server, and client with these individual commands:
+You can also start the database, server, and client in there own terminals with these individual commands:
 
-`docker-compose up -d`
+`docker-compose up`
 
 `npm run dev --workspace=server`
 
