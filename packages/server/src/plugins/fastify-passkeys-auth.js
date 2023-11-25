@@ -11,7 +11,6 @@ import Errors from 'http-errors'
 const RP_ID = 'localhost'
 const RP_NAME = 'SimpleWebAuthn Demo'
 
-/** @type {import('fastify').FastifyPluginAsync} */
 async function passkeys(fastify) {
   fastify.post('/auth/register/start', async request => {
     const user = request.body
@@ -28,7 +27,7 @@ async function passkeys(fastify) {
         rpName: RP_NAME,
         rpID: RP_ID,
         userID: id,
-        userName: user.userName,
+        userName: user.username,
         attestationType,
         authenticatorSelection
       })
@@ -84,7 +83,7 @@ async function passkeys(fastify) {
         transports: credential.response.transports || [],
         registered: new Date().getTime(),
         last_used: null,
-        userName: user.userName
+        username: user.username
       }
 
       const users = fastify.mongo.db.collection('users')
@@ -156,21 +155,28 @@ async function passkeys(fastify) {
 
       const { verified } = verification
 
+      // Delete the challenge from the session.
+      delete request.session.challenge
+
       // If the authentication failed, throw.
       if (!verified) {
         throw Errors.Unauthorized()
       }
 
-      // Delete the challenge from the session.
-      delete request.session.challenge
+      const time = new Date().getTime()
 
+      // update the user record
       users.updateOne(
         { id: user.id },
-        { $set: { 'registration.last_used': new Date().getTime() } }
+        { $set: { 'registration.last_used': time } }
       )
 
       // Start a new session.
-      request.session.user = user
+      request.session.user = {
+        ...user,
+        registration: { ...user.registration, last_used: time }
+      }
+
       reply.send(user)
     } catch (e) {
       request.log.error(e)
