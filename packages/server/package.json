@@ -15,7 +15,7 @@
     "@fastify/cors": "^8.4.0",
     "@fastify/mongodb": "^8.0.0",
     "@fastify/postgres": "^5.2.0",
-    "@fastify/session": "^10.6.0",
+    "@fastify/session": "^10.7.0",
     "@simplewebauthn/server": "^8.3.2",
     "env-schema": "^5.2.0",
     "fastify": "^4.24.1",
