@@ -18,7 +18,7 @@
     "@fastify/session": "^10.7.0",
     "@simplewebauthn/server": "^9.0.3",
     "env-schema": "^5.2.0",
-    "fastify": "^4.26.1",
+    "fastify": "^4.26.2",
     "fastify-plugin": "^4.5.1",
     "fluent-json-schema": "^4.2.1",
     "http-errors": "^2.0.0",
