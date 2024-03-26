@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 0",
-    "prepare": "husky install",
+    "prepare": "husky",
     "start": "docker compose up -d & npm run dev --workspace=server & npm run start --workspace=frontend"
   },
   "repository": {
